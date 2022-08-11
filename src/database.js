@@ -5,8 +5,10 @@ const mysqlConnection = mysql.createConnection({
   user: 'u882038204_omc',
   password: 'Optica_1',
   database: 'u882038204_registros_omc',
-  multipleStatements: true,
+  // multipleStatements: true,
   // debug: true
 });
 
 module.exports = mysqlConnection;
+
+

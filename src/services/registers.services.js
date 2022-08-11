@@ -4,7 +4,7 @@ const { ResultwithData, DataError, ResultOnly, ServerError } = require('../helpe
 
 const getAllRegisters = async ( req, res = response ) => {
     try {
-        mysqlConnection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));
+        mysqlConnection.connect();
         mysqlConnection.query('SELECT * FROM registers', (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
