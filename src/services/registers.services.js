@@ -1,10 +1,10 @@
 const { response } = require('express');
 const mysqlConnection  = require('../database.js');
-const { ResultwithData, DataError, ResultOnly } = require('../helpers/result.js');
+const { ResultwithData, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
 
 const getAllRegisters = async ( req, res = response ) => {
     try {
-        connection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));
+        mysqlConnection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));
         mysqlConnection.query('SELECT * FROM registers', (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
@@ -18,7 +18,7 @@ const getAllRegisters = async ( req, res = response ) => {
 
 const getRegisterForId = async ( req, res = response ) => {
     try {
-        connection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));
+        mysqlConnection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));
         const { id } = req.params; 
         mysqlConnection.query('SELECT * FROM registers WHERE id = ?', [id], (err, rows, fields) => {
           if(err) return ServerError(res, err);
@@ -34,7 +34,7 @@ const getRegisterForId = async ( req, res = response ) => {
 const deleteRegisterForId = async ( req, res = response ) => {
     try {
         const { id } = req.params;
-        connection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));
+        mysqlConnection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));
         mysqlConnection.query('DELETE FROM registers WHERE id = ?', [id], (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultOnly( res, 'Registro eliminado');
@@ -50,7 +50,7 @@ const insertRegister = async ( req, res = response ) => {
     try {
         const {id, name, salary} = req.body;
         console.log(id, name, salary);
-        connection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));d
+        mysqlConnection.connect( (error) => error ? DataError(res, error) : console.log('Conectado a la base de datos'));d
         const query = `
           SET @id = ?;
           SET @name = ?;
