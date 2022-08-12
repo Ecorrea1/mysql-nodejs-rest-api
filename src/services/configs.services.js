@@ -1,15 +1,13 @@
 const { response } = require('express');
-const mysqlConnection  = require('../database.js');
+const { mysqlConnection }  = require('../database.js');
 const { ResultwithData, DataError, ServerError } = require('../helpers/result.js');
 
 const getAllConfigs = async ( req, res = response ) => {
     try {
-        mysqlConnection.connect();
         mysqlConnection.query('SELECT * FROM configs', (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
         })
-        mysqlConnection.end();
     } catch (err) {
         console.log(err);
         return ServerError(res, err);

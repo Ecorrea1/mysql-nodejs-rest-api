@@ -33,6 +33,7 @@ const desconectado = () => {
 }
 
 module.exports = {
+  mysqlConnection,
   conectado,
   query,
   desconectado
