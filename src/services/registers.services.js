@@ -14,6 +14,38 @@ const getAllRegisters = async ( req, res = response ) => {
     }
 }
 
+const getAllRegistersWithWhere = async ( req, res = response ) => {
+    try {
+        poolConnection.query(
+            `SELECT'
+            rs.id,
+            rs.name, 
+            rs.age,
+            rs.phone,
+            rs.total,
+            rs.payment,
+            rs.balance,
+            rs.cristal,
+            rs.treatment,
+            rs.frame,
+            rs.observation,
+            pro.name as professional,
+            rs.date_atenttion,
+            rs.created_at,
+            rs.updated_at
+            FROM registers rs, professionals pro 
+            WHERE rs.professional = pro.id`,
+            
+            (err, rows, fields) => {
+            if(err) return ServerError(res, err);
+            ResultwithData(res, 'Lista de regitros', rows );
+        })
+    } catch (error) {
+        console.log(error);
+        return ServerError(res, error);
+    }
+}
+
 const getRegisterForId = async ( req, res = response ) => {
     try {
         const { id } = req.params; 
@@ -108,4 +140,4 @@ const updateRegisterForId = async ( req, res = response ) => {
     }
 }
 
-module.exports = { getAllRegisters, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId };
+module.exports = { getAllRegisters, getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId };
