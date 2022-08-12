@@ -1,10 +1,10 @@
 const { response } = require('express');
-const { mysqlConnection } = require('../database.js');
+const { mysqlConnection, poolConnection } = require('../database.js');
 const { ResultwithData, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
 
 const getAllRegisters = async ( req, res = response ) => {
     try {
-        mysqlConnection.query('SELECT * FROM registers', (err, rows, fields) => {
+        poolConnection.query('SELECT * FROM registers', (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
         })
@@ -17,7 +17,7 @@ const getAllRegisters = async ( req, res = response ) => {
 const getRegisterForId = async ( req, res = response ) => {
     try {
         const { id } = req.params; 
-        mysqlConnection.query('SELECT * FROM registers WHERE id = ?', [id], (err, rows, fields) => {
+        poolConnection.query('SELECT * FROM registers WHERE id = ?', [id], (err, rows, fields) => {
           if(err) return ServerError(res, err);
           ResultwithData(res, `Registros de ${id}`, rows[0] );
         });
@@ -30,7 +30,7 @@ const getRegisterForId = async ( req, res = response ) => {
 const deleteRegisterForId = async ( req, res = response ) => {
     try {
         const { id } = req.params;
-        mysqlConnection.query('DELETE FROM registers WHERE id = ?', [id], (err, rows, fields) => {
+        poolConnection.query('DELETE FROM registers WHERE id = ?', [id], (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultOnly( res, 'Registro eliminado');
         });
@@ -78,7 +78,7 @@ const insertRegister = async ( req, res = response ) => {
         "${ new Date() }",
         "${ new Date() }"
         );`;
-        mysqlConnection.query(query, (err, rows, fields) => {
+        poolConnection.query(query, (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultOnly( res, 'Registro guardado');
         });
@@ -98,7 +98,7 @@ const updateRegisterForId = async ( req, res = response ) => {
           SET @salary = ?;
           CALL registersAddOrEdit(@id, @name, @salary);
         `;
-        mysqlConnection.query(query, [id, name, salary], (err, rows, fields) => {
+        poolConnection.query(query, [id, name, salary], (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultOnly( res, 'Registro actualizado');
         } );
