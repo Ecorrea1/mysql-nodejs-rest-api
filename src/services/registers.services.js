@@ -17,7 +17,7 @@ const getAllRegisters = async ( req, res = response ) => {
 const getAllRegistersWithWhere = async ( req, res = response ) => {
     try {
         poolConnection.query(
-            `SELECT'
+            `SELECT
             id,
             name, 
             age,
