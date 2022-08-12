@@ -18,24 +18,23 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
     try {
         poolConnection.query(
             `SELECT'
-            rs.id,
-            rs.name, 
-            rs.age,
-            rs.phone,
-            rs.total,
-            rs.payment,
-            rs.balance,
-            rs.cristal,
-            rs.treatment,
-            rs.frame,
-            rs.observation,
-            pro.name as professional,
-            rs.date_atenttion,
-            rs.created_at,
-            rs.updated_at
-            FROM registers rs, professionals pro 
-            WHERE rs.professional = pro.id`,
-            
+            id,
+            name, 
+            age,
+            phone,
+            total,
+            payment,
+            balance,
+            (SELECT name FROM cristals WHERE id = cristal) AS cristal,
+            (SELECT name FROM treatment WHERE id = treatment) AS treatment,
+            frame,
+            observation,
+            (SELECT name FROM professionals WHERE id = professional) as professional,
+            date_atenttion,
+            created_at,
+            updated_at
+            FROM 
+            registers`,
             (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
