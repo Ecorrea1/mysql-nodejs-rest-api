@@ -42,9 +42,42 @@ const deleteRegisterForId = async ( req, res = response ) => {
 
 const insertRegister = async ( req, res = response ) => {
     try {
-        const { name, salary} = req.body;
+        const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention, created_at, updated_at} = req.body;
         console.log(id, name, salary);
-        const query = ` INSERT INTO registers (id, name, salary) VALUES (${null}, "${name}", ${salary});`;
+        const query = ` INSERT INTO registers 
+        (
+         id,
+         name, 
+         age,
+         phone,
+         total,
+         payment,
+         balance,
+         cristal,
+         treatment,
+         frame,
+         observation,
+         professional,
+         date_atenttion,
+         created_at,
+         updated_at
+        ) VALUES 
+        (${null}, 
+        "${name}", 
+        ${age}, 
+        ${phone}, 
+        ${total}, 
+        ${payment}, 
+        ${balance}, 
+        ${cristal},
+        ${treatment},
+        ${frame},
+        "${observation}",
+        ${professional},
+        "${ date_attention}",
+        "${ new Date() }",
+        "${ new Date() }"
+        );`;
         mysqlConnection.query(query, (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultOnly( res, 'Registro guardado');
