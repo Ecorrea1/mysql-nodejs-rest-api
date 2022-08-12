@@ -30,7 +30,7 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
             frame,
             observation,
             (SELECT name FROM professionals WHERE id = professional) as professional,
-            date_atenttion,
+            date_attention,
             created_at,
             updated_at
             FROM 
