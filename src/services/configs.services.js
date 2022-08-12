@@ -1,6 +1,6 @@
 const { response } = require('express');
 const mysqlConnection  = require('../database.js');
-const { ResultwithData, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
+const { ResultwithData, DataError, ServerError } = require('../helpers/result.js');
 
 const getAllConfigs = async ( req, res = response ) => {
     try {

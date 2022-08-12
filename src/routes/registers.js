@@ -1,18 +1,19 @@
 const { Router } = require('express');
 const router = Router();
-const { getAllRegisters, getRegisterForId, deleteRegisterForId, insertRegister } = require('../services/registers.services');
+const { getAllRegisters } = require('../services/registers.services');
+// const { getAllRegisters, getRegisterForId, deleteRegisterForId, insertRegister } = require('../services/registers.services');
 
 // GET all registerss
 router.get('/', getAllRegisters ); 
 
 // GET An registers
-router.get('/:id', getRegisterForId );
+// router.get('/:id', getRegisterForId );
 
-// DELETE An registers
-router.delete('/:id', deleteRegisterForId );
+// // DELETE An registers
+// router.delete('/:id', deleteRegisterForId );
 
-// INSERT An registers
-router.post('/', insertRegister );
+// // INSERT An registers
+// router.post('/', insertRegister );
 
 // router.put('/:id', (req, res) => {
 //   const { name, salary } = req.body;
