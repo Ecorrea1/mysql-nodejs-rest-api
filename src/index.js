@@ -1,12 +1,12 @@
 const express = require('express');
 const app = express();
-var cors = require('cors')
+const cors = require('cors');
 // Settings
 app.set('port', process.env.PORT || 3000 );
 
-// Middlewares
-app.use(express.json());
-app.use(cors());
+// Middlewares]
+app.use( express.json());
+app.use( cors() );
 
 // Configurar cabeceras y cors
 // app.use((req, res, next) => {

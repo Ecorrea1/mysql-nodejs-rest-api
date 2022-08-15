@@ -73,9 +73,10 @@ const deleteRegisterForId = async ( req, res = response ) => {
 
 const insertRegister = async ( req, res = response ) => {
     try {
-        const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention, created_at, updated_at} = req.body;
-        console.log(id, name, salary);
-        const query = ` INSERT INTO registers 
+        console.log('Entra a insertRegister');
+        console.log(req.body);
+        const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention } = req.body;
+        const query = `INSERT INTO registers 
         (
          id,
          name, 
@@ -89,25 +90,25 @@ const insertRegister = async ( req, res = response ) => {
          frame,
          observation,
          professional,
-         date_atenttion,
+         date_attention,
          created_at,
          updated_at
         ) VALUES 
         (${null}, 
         "${name}", 
-        ${age}, 
-        ${phone}, 
-        ${total}, 
-        ${payment}, 
-        ${balance}, 
-        ${cristal},
-        ${treatment},
-        ${frame},
+        ${parseInt(age)}, 
+        ${parseInt(phone)}, 
+        ${parseInt(total)}, 
+        ${parseInt(payment)}, 
+        ${parseInt(balance)}, 
+        ${parseInt(cristal)},
+        ${parseInt(treatment)},
+        ${parseInt(frame)},
         "${observation}",
-        ${professional},
-        "${ date_attention}",
-        "${ new Date() }",
-        "${ new Date() }"
+        ${parseInt(professional)},
+        "${ date_attention }",
+        "${ null }",
+        "${ null }"
         );`;
         poolConnection.query(query, (err, rows, fields) => {
             if(err) return ServerError(res, err);
