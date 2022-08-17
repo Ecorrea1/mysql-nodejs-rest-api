@@ -18,7 +18,9 @@ app.use( cors() );
 // });
 
 // Routes
+app.use('/api/users', require('./routes/users'));
 app.use('/api/registers', require('./routes/registers'));
+// app.use('/api/professionals', require('./routes/professionals'));
 app.use('/api/configs', require('./routes/configs'));
 
 // Starting the server

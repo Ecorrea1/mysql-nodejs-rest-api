@@ -2,8 +2,8 @@ const ServerError = (res, error) => {
     return res.status(500).json({ ok: false, msg: 'Error de servidor - Comunicarse con soporte', error });
 }
 
-const NewData = (res, msg, data, token) => {
-    return res.status(201).json({ ok: true, msg: msg, data, token });
+const NewData = (res, msg, data ) => {
+    return res.status(201).json({ ok: true, msg: msg, data: data });
 }
 
 const ResultwithData = (res, msg = '', data) => {

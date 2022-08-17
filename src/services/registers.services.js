@@ -2,9 +2,28 @@ const { response } = require('express');
 const { mysqlConnection, poolConnection } = require('../database.js');
 const { ResultwithData, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
 
+const sqlRegisters  = 
+`SELECT
+id,
+name, 
+age,
+phone,
+total,
+payment,
+balance,
+(SELECT name FROM cristals WHERE id = cristal) AS cristal,
+(SELECT name FROM treatment WHERE id = treatment) AS treatment,
+frame,
+observation,
+(SELECT name FROM professionals WHERE id = professional) as professional,
+date_attention,
+created_at,
+updated_at
+FROM registers `;
+
 const getAllRegisters = async ( req, res = response ) => {
     try {
-        poolConnection.query('SELECT * FROM registers', (err, rows, fields) => {
+        poolConnection.query( sqlRegisters + `ORDER BY created_at DESC`, (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
         })
@@ -15,27 +34,35 @@ const getAllRegisters = async ( req, res = response ) => {
 }
 
 const getAllRegistersWithWhere = async ( req, res = response ) => {
+    let sqlComplete = '';
+    if(req.query){
+        const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention, order } = req.query;
+        const query = sqlRegisters + 
+        `WHERE OR name = "${name}", 
+        OR age = ${age}, 
+        OR phone = ${phone}, 
+        OR total = ${total}, 
+        OR payment = ${payment}, 
+        OR balance = ${balance}, 
+        OR cristal = ${cristal}, 
+        OR treatment = ${treatment}, 
+        OR frame = ${frame},
+        OR observation = "${observation}",
+        OR professional = ${professional}, 
+        OR date_attention = "${date_attention}" `;
+ 
+        if(order){
+            sqlComplete = query + `ORDER BY ${order} DESC;`;
+        } else {
+            sqlComplete = query + `ORDER BY created_at DESC;`;
+        }
+
+    }else {
+        sqlComplete = sqlRegisters + `ORDER BY created_at DESC`;
+    }
+
     try {
-        poolConnection.query(
-            `SELECT
-            id,
-            name, 
-            age,
-            phone,
-            total,
-            payment,
-            balance,
-            (SELECT name FROM cristals WHERE id = cristal) AS cristal,
-            (SELECT name FROM treatment WHERE id = treatment) AS treatment,
-            frame,
-            observation,
-            (SELECT name FROM professionals WHERE id = professional) as professional,
-            date_attention,
-            created_at,
-            updated_at
-            FROM 
-            registers`,
-            (err, rows, fields) => {
+        poolConnection.query( sqlComplete, (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
         })
@@ -74,7 +101,6 @@ const deleteRegisterForId = async ( req, res = response ) => {
 const insertRegister = async ( req, res = response ) => {
     try {
         console.log('Entra a insertRegister');
-        console.log(req.body);
         const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention } = req.body;
         const query = `INSERT INTO registers 
         (
@@ -96,23 +122,23 @@ const insertRegister = async ( req, res = response ) => {
         ) VALUES 
         (${null}, 
         "${name}", 
-        ${parseInt(age)}, 
-        ${parseInt(phone)}, 
-        ${parseInt(total)}, 
-        ${parseInt(payment)}, 
-        ${parseInt(balance)}, 
-        ${parseInt(cristal)},
-        ${parseInt(treatment)},
-        ${parseInt(frame)},
+        ${age}, 
+        ${phone}, 
+        ${total}, 
+        ${payment}, 
+        ${balance}, 
+        ${cristal},
+        ${treatment},
+        ${frame},
         "${observation}",
-        ${parseInt(professional)},
+        ${professional},
         "${ date_attention }",
-        "${ null }",
-        "${ null }"
+        "${ new Date().getDate() }",
+        "${ new Date().getDate() }"
         );`;
         poolConnection.query(query, (err, rows, fields) => {
             if(err) return ServerError(res, err);
-            ResultOnly( res, 'Registro guardado');
+            NewData( res, 'Registro guardado', rows[0]);
         });
     } catch (error) {
         console.log(error);
@@ -123,14 +149,17 @@ const insertRegister = async ( req, res = response ) => {
 const updateRegisterForId = async ( req, res = response ) => {
     try {
         const { id } = req.params;
-        const { name, salary } = req.body;
+        const { name, total, payment, balance } = req.body;
         const query = `
           SET @id = ?;
           SET @name = ?;
-          SET @salary = ?;
-          CALL registersAddOrEdit(@id, @name, @salary);
+          SET @total = ?;
+          SET @payment = ?;
+          SET @balance = ?;
+          SET @updated_at = ?;
+          CALL updateRegister(@id, @name, @payment, @updated_at);
         `;
-        poolConnection.query(query, [id, name, salary], (err, rows, fields) => {
+        poolConnection.query(query, [id, name, total, payment,  balance, new Date().getDate()], (err, rows, fields) => {
             if(err) return ServerError(res, err);
             ResultOnly( res, 'Registro actualizado');
         } );
@@ -140,4 +169,17 @@ const updateRegisterForId = async ( req, res = response ) => {
     }
 }
 
-module.exports = { getAllRegisters, getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId };
+const getOptionsForSelect = async ( req, res = response ) => {
+    try {
+        const { table } = req.params;
+        poolConnection.query(`SELECT * FROM ${table}`, (err, rows, fields) => {
+            if(err) return ServerError(res, err);
+            ResultwithData(res, `Lista de ${table}`, rows );
+        } );
+    } catch (error) {
+        console.log(error);
+        return ServerError(res, error);
+    }
+}
+
+module.exports = { getAllRegisters, getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId, getOptionsForSelect };
