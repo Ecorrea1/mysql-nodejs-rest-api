@@ -40,18 +40,25 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
     let sqlComplete = '';
     if(req.query){
         const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention, order, page, limit } = req.query;
-        let query = sqlRegisters +` WHERE name LIKE "%${name}%" `;
-        if(age) query += `AND age = ${age} `;
-        if(phone) query += `AND phone = ${phone} `;
-        if(total) query += `AND total = ${total} `;
-        if(payment) query += `AND payment = ${payment} `;
-        if(balance) query += `AND balance = ${balance} `;
-        if(cristal) query += `AND cristal = ${cristal} `;
-        if(treatment) query += `AND treatment = ${treatment} `;
-        if(frame) query += `AND frame = ${frame} `;
-        if(observation) query += `AND observation = ${observation} `;
-        if(professional) query += `AND professional = ${professional} `;
-        if(date_attention) query += `AND date_attention = ${date_attention} `;
+        let query = sqlRegisters +` WHERE `;
+
+        if(name || age || phone || total || payment || balance || cristal || treatment || frame || observation || professional || date_attention){
+            let arrayQuery = [];
+            if(name) arrayQuery.push(` name LIKE "%${name}%" `);
+            if(age) arrayQuery.push(` age LIKE "%${age}%" `);
+            if(phone) arrayQuery.push(` phone LIKE "%${phone}%" `);
+            if(total) arrayQuery.push(` total LIKE "%${total}%" `);
+            if(payment) arrayQuery.push(` payment LIKE "%${payment}%" `);
+            if(balance) arrayQuery.push(` balance LIKE "%${balance}%" `);
+            if(cristal) arrayQuery.push(` cristal LIKE "%${cristal}%" `);
+            if(treatment) arrayQuery.push(` treatment LIKE "%${treatment}%" `);
+            if(frame) arrayQuery.push(` frame LIKE "%${frame}%" `);
+            if(observation) arrayQuery.push(` observation LIKE "%${observation}%" `);
+            if(professional) arrayQuery.push(` professional LIKE "%${professional}%" `);
+            if(date_attention) arrayQuery.push(` date_attention LIKE "%${date_attention}%" `);
+            query +=  arrayQuery.join(' AND ');
+    
+        }
 
         sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } DESC`;
         
