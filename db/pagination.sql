@@ -1,0 +1,11 @@
+SET @page = 1;
+set @pageSize = 10;
+set @totalRows = (SELECT COUNT(*) FROM register);
+set @totalPages = CEIL(@totalRows / @pageSize);
+set @start = (@page - 1) * @pageSize;
+set @end = @start + @pageSize;
+set @limit = @end - @start;
+set @offset = @start;
+set @orderBy = 'id';
+set @order = 'ASC';
+set @search = '';

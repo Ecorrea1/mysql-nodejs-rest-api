@@ -5,7 +5,7 @@ const { ResultwithData, DataError, ResultOnly, ServerError } = require('../helpe
 const getAllProfessionals = async ( req, res = response ) => {
     try {
         poolConnection.query('SELECT * FROM professionals', (err, rows, fields) => {
-            if(err) return ServerError(res, err);
+            if(err) return DataError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
         })
     } catch (error) {
@@ -18,7 +18,7 @@ const getProfessionalForId = async ( req, res = response ) => {
     try {
         const { id } = req.params; 
         poolConnection.query('SELECT * FROM professionals WHERE id = ?', [id], (err, rows, fields) => {
-          if(err) return ServerError(res, err);
+          if(err) return DataError(res, err);
           ResultwithData(res, `Registros de ${id}`, rows[0] );
         });
     } catch (error) {
@@ -31,7 +31,7 @@ const deleteProfessionalForId = async ( req, res = response ) => {
     try {
         const { id } = req.params;
         poolConnection.query('DELETE FROM professionals WHERE id = ?', [id], (err, rows, fields) => {
-            if(err) return ServerError(res, err);
+            if(err) return DataError(res, err);
             ResultOnly( res, 'Registro eliminado');
         });
     } catch (error) {
@@ -57,7 +57,7 @@ const insertProfessional = async ( req, res = response ) => {
         ${1}
         );`;
         poolConnection.query(query, (err, rows, fields) => {
-            if(err) return ServerError(res, err);
+            if(err) return DataError(res, err);
             ResultOnly( res, 'Registro guardado');
         });
     } catch (error) {
@@ -77,7 +77,7 @@ const updateProfessional = async ( req, res = response ) => {
           CALL registersAddOrEdit(@id, @name, @salary);
         `;
         poolConnection.query(query, [id, name, salary], (err, rows, fields) => {
-            if(err) return ServerError(res, err);
+            if(err) return DataError(res, err);
             ResultOnly( res, 'Registro actualizado');
         } );
     } catch (error) {

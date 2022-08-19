@@ -10,6 +10,10 @@ const ResultwithData = (res, msg = '', data) => {
     return res.status(200).json({ ok: true, msg: msg, data: data });
 }
 
+const ResultwithDataPagination = (res, msg = '', data, next, prev, total) => {
+    return res.status(200).json({ ok: true, msg: msg, data: data, next: next, prev: prev, total: total });
+}
+
 const ResultOnly = (res, msg = '') => {
     return res.status(200).json({ ok: true, msg: msg });
 }
@@ -19,11 +23,10 @@ const DataError = (res, msg) => {
 }
 
 module.exports = {
-
     ServerError,
     NewData,
     DataError,
     ResultwithData,
+    ResultwithDataPagination,
     ResultOnly
-
 }
