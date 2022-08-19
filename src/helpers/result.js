@@ -3,11 +3,11 @@ const ServerError = (res, error) => {
 }
 
 const NewData = (res, msg, data ) => {
-    return res.status(201).json({ ok: true, msg: msg, data: data });
+    return res.status(201).json({ ok: true, msg: msg, data: data ?? [] });
 }
 
 const ResultwithData = (res, msg = '', data) => {
-    return res.status(200).json({ ok: true, msg: msg, data: data });
+    return res.status(200).json({ ok: true, msg: msg, data: data ?? [] });
 }
 
 const ResultwithDataPagination = (res, msg = '', data, next, prev, total) => {
