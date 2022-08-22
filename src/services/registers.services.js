@@ -1,6 +1,7 @@
 const { response } = require('express');
+const moment = require('moment');
 const { mysqlConnection, poolConnection } = require('../database.js');
-const { ResultwithData, ResultwithDataPagination, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
+const { ResultwithData, ResultwithDataPagination, NewData, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
 
 const sqlRegisters  = 
 `SELECT
@@ -43,6 +44,8 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
         let query = sqlRegisters +` WHERE `;
 
         if(name || age || phone || total || payment || balance || cristal || treatment || frame || observation || professional || date_attention){
+            console.log('Fecha de atencion');
+            console.log(moment(date_attention).format('YYYY-MM-DD'));
             let arrayQuery = [];
             if(name) arrayQuery.push(` name LIKE "%${name}%" `);
             if(age) arrayQuery.push(` age LIKE "%${age}%" `);
@@ -55,7 +58,7 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
             if(frame) arrayQuery.push(` frame LIKE "%${frame}%" `);
             if(observation) arrayQuery.push(` observation LIKE "%${observation}%" `);
             if(professional) arrayQuery.push(` professional LIKE "%${professional}%" `);
-            if(date_attention) arrayQuery.push(` date_attention LIKE "%${date_attention}%" `);
+            if(date_attention) arrayQuery.push(` date_attention LIKE "%${ moment(date_attention).format('YYYY-MM-DD')}%" `);
             query +=  arrayQuery.join(' AND ');
     
         }
@@ -162,9 +165,9 @@ const insertRegister = async ( req, res = response ) => {
         ${frame},
         "${observation}",
         ${professional},
-        "${ date_attention }",
-        "${ new Date().getDate() }",
-        "${ new Date().getDate() }"
+        "${ moment(date_attention).format('YYYY-MM-DD')}",
+        "${ moment().format("YYYY-MM-DD") }",
+        "${ moment().format("YYYY-MM-DD") }"
         );`;
         poolConnection.query(query, (err, rows, fields) => {
             if(err) return DataError(res, err);
