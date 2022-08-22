@@ -25,7 +25,7 @@ FROM registers `;
 const getAllRegisters = async ( req, res = response ) => {
     console.log('Entra a getAllRegisters');
     try {
-        poolConnection.query( sqlRegisters + `ORDER BY created_at DESC`, (err, rows, fields) => {
+        poolConnection.query( sqlRegisters + `ORDER BY created_at ASC`, (err, rows, fields) => {
             if(err) return DataError(res, err);
             ResultwithData(res, 'Lista de regitros', rows );
         })
@@ -63,7 +63,7 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
     
         }
 
-        sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } DESC`;
+        sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } ASC`;
         
         if (page) sqlComplete += ` LIMIT ${limit ?? 10} OFFSET ${(limit ?? 10) * (page - 1)};`;
         
@@ -90,7 +90,7 @@ const getAllRegistersWithPagination = async ( req, res = response ) => {
     console.log('page: ', page);
     
     const offset = limit * (page - 1);
-    const sqlComplete = sqlRegisters + `ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset};`;
+    const sqlComplete = sqlRegisters + `ORDER BY created_at ASC LIMIT ${limit} OFFSET ${offset};`;
     try {
         poolConnection.query( sqlComplete, (err, rows, fields) => {
             if(err) return DataError(res, err);
@@ -171,6 +171,8 @@ const insertRegister = async ( req, res = response ) => {
         );`;
         poolConnection.query(query, (err, rows, fields) => {
             if(err) return DataError(res, err);
+            console.log(rows[0]);
+            console.log('Aqui deberia de insertar');
             NewData( res, 'Registro guardado', rows[0]);
         });
     } catch (error) {
