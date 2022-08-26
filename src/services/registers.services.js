@@ -106,7 +106,7 @@ const getRegisterForId = async ( req, res = response ) => {
     console.log('Entra a getRegisterForId');
     try {
         const { id } = req.params; 
-        poolConnection.query( sqlRegisters + 'WHERE id = ?', [id], (err, rows, fields) => {
+        poolConnection.query('SELECT * FROM registers WHERE id = ?', [id], (err, rows, fields) => {
           if(err) return DataError(res, err);
           ResultwithData(res, `Registros de ${id}`, rows[0] );
         });
