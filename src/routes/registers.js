@@ -19,6 +19,7 @@ router.post('/', insertRegister );
 
 // UPDATE An registers
 router.put('/:id', updateRegisterForId );
+router.post('/edit/:id', updateRegisterForId );
 
 router.get('/table/:table', getOptionsForSelect );
 

@@ -185,17 +185,24 @@ const updateRegisterForId = async ( req, res = response ) => {
     console.log('Entra a updateRegisterForId');
     try {
         const { id } = req.params;
-        const { name, total, payment, balance } = req.body;
+        const { name, age, phone, total, payment, cristal, treatment, frame, observation, professional, date_attention } = req.body;
         const query = `
-          SET @id = ?;
-          SET @name = ?;
-          SET @total = ?;
-          SET @payment = ?;
-          SET @balance = ?;
-          SET @updated_at = ?;
-          CALL updateRegister(@id, @name, @payment, @updated_at);
-        `;
-        poolConnection.query(query, [id, name, total, payment,  balance, new Date().getDate()], (err, rows, fields) => {
+         UPDATE registers
+          SET name = ?,
+          age = ?,
+          phone = ?,
+          total = ?,
+          payment = ?,
+          cristal = ?,
+          treatment = ?,
+          frame = ?,
+          observation = ?,
+          professional = ?,
+          date_attention = ?,
+          updated_at = ?
+          WHERE id = ${id};`;
+        poolConnection.query(query, [name, age, phone, total, payment, cristal, treatment, frame, observation, professional, moment(date_attention).format('YYYY-MM-DD'), moment().format("YYYY-MM-DD") ], (err, rows, fields) => {
+            console.log(err);
             if(err) return DataError(res, err);
             ResultOnly( res, 'Registro actualizado');
         } );
