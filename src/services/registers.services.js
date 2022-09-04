@@ -18,6 +18,22 @@ frame,
 observation,
 (SELECT name FROM professionals WHERE id = professional) as professional,
 date_attention,
+far_eye_right_sphere,
+far_eye_left_sphere,
+far_eye_right_cylinder,
+far_eye_left_cylinder,
+far_eye_right_grade,
+far_eye_left_grade,
+far_eye_right_pupillary_distance,
+far_eye_left_pupillary_distance,
+near_eye_right_sphere,
+near_eye_left_sphere,
+near_eye_right_cylinder,
+near_eye_left_cylinder,
+near_eye_right_grade,
+near_eye_left_grade,
+near_eye_right_pupillary_distance,
+near_eye_left_pupillary_distance,
 created_at,
 updated_at
 FROM registers `;
@@ -58,14 +74,14 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
             if(frame) arrayQuery.push(` frame LIKE "%${frame}%" `);
             if(observation) arrayQuery.push(` observation LIKE "%${observation}%" `);
             if(professional) arrayQuery.push(` professional LIKE "%${professional}%" `);
-            if(date_attention) arrayQuery.push(` date_attention LIKE "%${ moment(date_attention).format('YYYY-MM-DD')}%" `);
+            if(date_attention) arrayQuery.push(` date_attention LIKE "%${ moment( date_attention ).format('YYYY-MM-DD')}%" `);
             query +=  arrayQuery.join(' AND ');
     
         }
 
         sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } ASC`;
         
-        if (page) sqlComplete += ` LIMIT ${limit ?? 10} OFFSET ${(limit ?? 10) * (page - 1)};`;
+        if (page) sqlComplete += ` LIMIT ${ limit ?? 10 } OFFSET ${( limit ?? 10 ) * ( page - 1 )};`;
         
 
     } else {
@@ -74,11 +90,11 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
     }
         poolConnection.query( sqlComplete, (err, rows, fields) => {
             if(err) return DataError(res, err);
-            ResultwithData(res, 'Lista de regitros', rows );
+            ResultwithData( res, 'Lista de regitros', rows );
         })
     } catch (error) {
-        console.log(error);
-        return ServerError(res, error);
+        console.log( error );
+        return ServerError( res, error);
     }
 }
 
@@ -90,11 +106,11 @@ const getAllRegistersWithPagination = async ( req, res = response ) => {
     console.log('page: ', page);
     
     const offset = limit * (page - 1);
-    const sqlComplete = sqlRegisters + `ORDER BY created_at ASC LIMIT ${limit} OFFSET ${offset};`;
+    const sqlComplete = sqlRegisters + `ORDER BY created_at DESC LIMIT ${ limit } OFFSET ${ offset };`;
     try {
         poolConnection.query( sqlComplete, (err, rows, fields) => {
             if(err) return DataError(res, err);
-            ResultwithDataPagination(res, 'Lista de regitros', rows, page + 1, page - 1,  );
+            ResultwithDataPagination(res, 'Lista de regitros', rows, page + 1, page <= 0 ?  page = 1 : page - 1,  );
         } );
     } catch (error) {
         console.log(error);
@@ -133,8 +149,36 @@ const deleteRegisterForId = async ( req, res = response ) => {
 const insertRegister = async ( req, res = response ) => {
     console.log('Entra a insertRegister');
     try {
-        console.log('Entra a insertRegister');
-        const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention } = req.body;
+        const { 
+            name, 
+            age, 
+            phone,
+            total, 
+            payment, 
+            balance, 
+            cristal, 
+            treatment, 
+            frame, 
+            observation, 
+            professional, 
+            date_attention,
+            far_eye_right_sphere,
+            far_eye_left_sphere,
+            far_eye_right_cylinder,
+            far_eye_left_cylinder,
+            far_eye_right_grade,
+            far_eye_left_grade,
+            far_eye_right_pupillary_distance,
+            far_eye_left_pupillary_distance,
+            near_eye_right_sphere,
+            near_eye_left_sphere,
+            near_eye_right_cylinder,
+            near_eye_left_cylinder,
+            near_eye_right_grade,
+            near_eye_left_grade,
+            near_eye_right_pupillary_distance,
+            near_eye_left_pupillary_distance
+        } = req.body;
         const query = `INSERT INTO registers 
         (
          id,
@@ -150,6 +194,22 @@ const insertRegister = async ( req, res = response ) => {
          observation,
          professional,
          date_attention,
+         far_eye_right_sphere,
+         far_eye_left_sphere,
+         far_eye_right_cylinder,
+         far_eye_left_cylinder,
+         far_eye_right_grade,
+         far_eye_left_grade,
+         far_eye_right_pupillary_distance,
+         far_eye_left_pupillary_distance,
+         near_eye_right_sphere,
+         near_eye_left_sphere,
+         near_eye_right_cylinder,
+         near_eye_left_cylinder,
+         near_eye_right_grade,
+         near_eye_left_grade,
+         near_eye_right_pupillary_distance,
+         near_eye_left_pupillary_distance,
          created_at,
          updated_at
         ) VALUES 
@@ -166,6 +226,22 @@ const insertRegister = async ( req, res = response ) => {
         "${observation}",
         ${professional},
         "${ moment(date_attention).format('YYYY-MM-DD')}",
+        ${far_eye_right_sphere ?? 0 },
+        ${far_eye_left_sphere ?? 0},
+        ${far_eye_right_cylinder ?? 0},
+        ${far_eye_left_cylinder ?? 0},
+        ${far_eye_right_grade ?? 0},
+        ${far_eye_left_grade ?? 0},
+        ${far_eye_right_pupillary_distance ?? 0},
+        ${far_eye_left_pupillary_distance ?? 0},
+        ${near_eye_right_sphere ?? 0},
+        ${near_eye_left_sphere ?? 0},
+        ${near_eye_right_cylinder ?? 0},
+        ${near_eye_left_cylinder ?? 0},
+        ${near_eye_right_grade ?? 0},
+        ${near_eye_left_grade ?? 0},
+        ${near_eye_right_pupillary_distance ?? 0},
+        ${near_eye_left_pupillary_distance ?? 0},
         "${ moment().format("YYYY-MM-DD") }",
         "${ moment().format("YYYY-MM-DD") }"
         );`;
@@ -185,7 +261,35 @@ const updateRegisterForId = async ( req, res = response ) => {
     console.log('Entra a updateRegisterForId');
     try {
         const { id } = req.params;
-        const { name, age, phone, total, payment, cristal, treatment, frame, observation, professional, date_attention } = req.body;
+        const { 
+            name, 
+            age, 
+            phone,
+            total, 
+            payment,
+            cristal, 
+            treatment, 
+            frame, 
+            observation, 
+            professional, 
+            date_attention,
+            far_eye_right_sphere,
+            far_eye_left_sphere,
+            far_eye_right_cylinder,
+            far_eye_left_cylinder,
+            far_eye_right_grade,
+            far_eye_left_grade,
+            far_eye_right_pupillary_distance,
+            far_eye_left_pupillary_distance,
+            near_eye_right_sphere,
+            near_eye_left_sphere,
+            near_eye_right_cylinder,
+            near_eye_left_cylinder,
+            near_eye_right_grade,
+            near_eye_left_grade,
+            near_eye_right_pupillary_distance,
+            near_eye_left_pupillary_distance
+        } = req.body;
         const query = `
          UPDATE registers
           SET name = ?,
@@ -193,15 +297,63 @@ const updateRegisterForId = async ( req, res = response ) => {
           phone = ?,
           total = ?,
           payment = ?,
+          balance = ?,
           cristal = ?,
           treatment = ?,
           frame = ?,
           observation = ?,
           professional = ?,
           date_attention = ?,
+          far_eye_right_sphere = ?,
+          far_eye_left_sphere = ?,
+          far_eye_right_cylinder = ?,
+          far_eye_left_cylinder = ?,
+          far_eye_right_grade = ?,
+          far_eye_left_grade = ?,
+          far_eye_right_pupillary_distance = ?,
+          far_eye_left_pupillary_distance = ?,
+          near_eye_right_sphere = ?,
+          near_eye_left_sphere = ?,
+          near_eye_right_cylinder = ?,
+          near_eye_left_cylinder = ?,
+          near_eye_right_grade = ?,
+          near_eye_left_grade = ?,
+          near_eye_right_pupillary_distance = ?,
+          near_eye_left_pupillary_distance = ?,
           updated_at = ?
-          WHERE id = ${id};`;
-        poolConnection.query(query, [name, age, phone, total, payment, cristal, treatment, frame, observation, professional, moment(date_attention).format('YYYY-MM-DD'), moment().format("YYYY-MM-DD") ], (err, rows, fields) => {
+          WHERE id = ${ id };`;
+        poolConnection.query(query, 
+            [
+                name, 
+                age, 
+                phone, 
+                total, 
+                payment, 
+                (total - payment),
+                cristal, 
+                treatment, 
+                frame, 
+                observation, 
+                professional, 
+                moment(date_attention).format('YYYY-MM-DD'),
+                far_eye_right_sphere ?? 0,
+                far_eye_left_sphere ?? 0,
+                far_eye_right_cylinder ?? 0,
+                far_eye_left_cylinder ?? 0,
+                far_eye_right_grade ?? 0,
+                far_eye_left_grade ?? 0,
+                far_eye_right_pupillary_distance ?? 0,
+                far_eye_left_pupillary_distance ?? 0,
+                near_eye_right_sphere ?? 0,
+                near_eye_left_sphere ?? 0,
+                near_eye_right_cylinder ?? 0,
+                near_eye_left_cylinder ?? 0,
+                near_eye_right_grade ?? 0,
+                near_eye_left_grade ?? 0,
+                near_eye_right_pupillary_distance ?? 0,
+                near_eye_left_pupillary_distance ?? 0,
+                moment().format("YYYY-MM-DD") ], 
+            (err, rows, fields) => {
             console.log(err);
             if(err) return DataError(res, err);
             ResultOnly( res, 'Registro actualizado');
@@ -216,9 +368,9 @@ const getOptionsForSelect = async ( req, res = response ) => {
     console.log('Entra a getOptionsForSelect');
     try {
         const { table } = req.params;
-        poolConnection.query(`SELECT * FROM ${table} WHERE enabled = 1`, (err, rows, fields) => {
-            if(err) return DataError(res, err);
-            ResultwithData(res, `Lista de ${table}`, rows );
+        poolConnection.query(`SELECT * FROM ${ table } WHERE enabled = 1`, (err, rows, fields) => {
+            if(err) return DataError( res, err );
+            ResultwithData(res, `Lista de ${ table }`, rows );
         } );
     } catch (error) {
         console.log(error);
