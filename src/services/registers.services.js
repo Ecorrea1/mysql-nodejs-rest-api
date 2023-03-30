@@ -158,13 +158,6 @@ const insertRegister = async ( req, res = response ) => {
             far_eye_right_pupillary_distance,
             far_eye_left_pupillary_distance,
             near_eye_right_sphere
-            // near_eye_left_sphere,
-            // near_eye_right_cylinder,
-            // near_eye_left_cylinder,
-            // near_eye_right_grade,
-            // near_eye_left_grade,
-            // near_eye_right_pupillary_distance,
-            // near_eye_left_pupillary_distance
         } = req.body;
         const query = `INSERT INTO registers 
         (
@@ -250,13 +243,6 @@ const updateRegisterForId = async ( req, res = response ) => {
             far_eye_right_pupillary_distance,
             far_eye_left_pupillary_distance,
             near_eye_right_sphere
-            // near_eye_left_sphere,
-            // near_eye_right_cylinder,
-            // near_eye_left_cylinder,
-            // near_eye_right_grade,
-            // near_eye_left_grade,
-            // near_eye_right_pupillary_distance,
-            // near_eye_left_pupillary_distance
         } = req.body;
         const query = `
          UPDATE registers
@@ -302,13 +288,6 @@ const updateRegisterForId = async ( req, res = response ) => {
                 far_eye_right_pupillary_distance ?? 0,
                 far_eye_left_pupillary_distance ?? 0,
                 near_eye_right_sphere ?? 0,
-                // near_eye_left_sphere ?? 0,
-                // near_eye_right_cylinder ?? 0,
-                // near_eye_left_cylinder ?? 0,
-                // near_eye_right_grade ?? 0,
-                // near_eye_left_grade ?? 0,
-                // near_eye_right_pupillary_distance ?? 0,
-                // near_eye_left_pupillary_distance ?? 0,
                 moment().format("YYYY-MM-DD") ], 
             (err, rows, fields) => {
             console.log(err);
