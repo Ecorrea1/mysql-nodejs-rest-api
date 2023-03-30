@@ -10,8 +10,6 @@ name,
 age,
 phone,
 total,
-payment,
-balance,
 (SELECT name FROM cristals WHERE id = cristal) AS cristal,
 (SELECT name FROM treatment WHERE id = treatment) AS treatment,
 frame,
@@ -27,13 +25,6 @@ far_eye_left_grade,
 far_eye_right_pupillary_distance,
 far_eye_left_pupillary_distance,
 near_eye_right_sphere,
-near_eye_left_sphere,
-near_eye_right_cylinder,
-near_eye_left_cylinder,
-near_eye_right_grade,
-near_eye_left_grade,
-near_eye_right_pupillary_distance,
-near_eye_left_pupillary_distance,
 created_at,
 updated_at
 FROM registers `;
@@ -56,7 +47,7 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
     try {
     let sqlComplete = '';
     if(req.query){
-        const { name, age, phone, total, payment, balance, cristal, treatment, frame, observation, professional, date_attention, order, page, limit } = req.query;
+        const { name, age, phone, total, cristal, treatment, frame, observation, professional, date_attention, order, page, limit } = req.query;
         let query = sqlRegisters +` WHERE `;
 
         if(name || age || phone || total || payment || balance || cristal || treatment || frame || observation || professional || date_attention){
@@ -67,8 +58,6 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
             if(age) arrayQuery.push(` age LIKE "%${age}%" `);
             if(phone) arrayQuery.push(` phone LIKE "%${phone}%" `);
             if(total) arrayQuery.push(` total LIKE "%${total}%" `);
-            if(payment) arrayQuery.push(` payment LIKE "%${payment}%" `);
-            if(balance) arrayQuery.push(` balance LIKE "%${balance}%" `);
             if(cristal) arrayQuery.push(` cristal LIKE "%${cristal}%" `);
             if(treatment) arrayQuery.push(` treatment LIKE "%${treatment}%" `);
             if(frame) arrayQuery.push(` frame LIKE "%${frame}%" `);
@@ -153,9 +142,7 @@ const insertRegister = async ( req, res = response ) => {
             name, 
             age, 
             phone,
-            total, 
-            payment, 
-            balance, 
+            total,
             cristal, 
             treatment, 
             frame, 
@@ -170,14 +157,14 @@ const insertRegister = async ( req, res = response ) => {
             far_eye_left_grade,
             far_eye_right_pupillary_distance,
             far_eye_left_pupillary_distance,
-            near_eye_right_sphere,
-            near_eye_left_sphere,
-            near_eye_right_cylinder,
-            near_eye_left_cylinder,
-            near_eye_right_grade,
-            near_eye_left_grade,
-            near_eye_right_pupillary_distance,
-            near_eye_left_pupillary_distance
+            near_eye_right_sphere
+            // near_eye_left_sphere,
+            // near_eye_right_cylinder,
+            // near_eye_left_cylinder,
+            // near_eye_right_grade,
+            // near_eye_left_grade,
+            // near_eye_right_pupillary_distance,
+            // near_eye_left_pupillary_distance
         } = req.body;
         const query = `INSERT INTO registers 
         (
@@ -186,8 +173,6 @@ const insertRegister = async ( req, res = response ) => {
          age,
          phone,
          total,
-         payment,
-         balance,
          cristal,
          treatment,
          frame,
@@ -203,13 +188,6 @@ const insertRegister = async ( req, res = response ) => {
          far_eye_right_pupillary_distance,
          far_eye_left_pupillary_distance,
          near_eye_right_sphere,
-         near_eye_left_sphere,
-         near_eye_right_cylinder,
-         near_eye_left_cylinder,
-         near_eye_right_grade,
-         near_eye_left_grade,
-         near_eye_right_pupillary_distance,
-         near_eye_left_pupillary_distance,
          created_at,
          updated_at
         ) VALUES 
@@ -217,9 +195,7 @@ const insertRegister = async ( req, res = response ) => {
         "${name}", 
         ${age}, 
         ${phone}, 
-        ${total}, 
-        ${payment}, 
-        ${balance}, 
+        ${total},
         ${cristal},
         ${treatment},
         "${frame}",
@@ -235,13 +211,6 @@ const insertRegister = async ( req, res = response ) => {
         ${far_eye_right_pupillary_distance ?? 0},
         ${far_eye_left_pupillary_distance ?? 0},
         ${near_eye_right_sphere ?? 0},
-        ${near_eye_left_sphere ?? 0},
-        ${near_eye_right_cylinder ?? 0},
-        ${near_eye_left_cylinder ?? 0},
-        ${near_eye_right_grade ?? 0},
-        ${near_eye_left_grade ?? 0},
-        ${near_eye_right_pupillary_distance ?? 0},
-        ${near_eye_left_pupillary_distance ?? 0},
         "${ moment().format("YYYY-MM-DD") }",
         "${ moment().format("YYYY-MM-DD") }"
         );`;
@@ -265,8 +234,7 @@ const updateRegisterForId = async ( req, res = response ) => {
             name, 
             age, 
             phone,
-            total, 
-            payment,
+            total,
             cristal, 
             treatment, 
             frame, 
@@ -281,14 +249,14 @@ const updateRegisterForId = async ( req, res = response ) => {
             far_eye_left_grade,
             far_eye_right_pupillary_distance,
             far_eye_left_pupillary_distance,
-            near_eye_right_sphere,
-            near_eye_left_sphere,
-            near_eye_right_cylinder,
-            near_eye_left_cylinder,
-            near_eye_right_grade,
-            near_eye_left_grade,
-            near_eye_right_pupillary_distance,
-            near_eye_left_pupillary_distance
+            near_eye_right_sphere
+            // near_eye_left_sphere,
+            // near_eye_right_cylinder,
+            // near_eye_left_cylinder,
+            // near_eye_right_grade,
+            // near_eye_left_grade,
+            // near_eye_right_pupillary_distance,
+            // near_eye_left_pupillary_distance
         } = req.body;
         const query = `
          UPDATE registers
@@ -296,8 +264,6 @@ const updateRegisterForId = async ( req, res = response ) => {
           age = ?,
           phone = ?,
           total = ?,
-          payment = ?,
-          balance = ?,
           cristal = ?,
           treatment = ?,
           frame = ?,
@@ -313,13 +279,6 @@ const updateRegisterForId = async ( req, res = response ) => {
           far_eye_right_pupillary_distance = ?,
           far_eye_left_pupillary_distance = ?,
           near_eye_right_sphere = ?,
-          near_eye_left_sphere = ?,
-          near_eye_right_cylinder = ?,
-          near_eye_left_cylinder = ?,
-          near_eye_right_grade = ?,
-          near_eye_left_grade = ?,
-          near_eye_right_pupillary_distance = ?,
-          near_eye_left_pupillary_distance = ?,
           updated_at = ?
           WHERE id = ${ id };`;
         poolConnection.query(query, 
@@ -327,9 +286,7 @@ const updateRegisterForId = async ( req, res = response ) => {
                 name, 
                 age, 
                 phone, 
-                total, 
-                payment, 
-                (total - payment),
+                total,
                 cristal, 
                 treatment, 
                 frame, 
@@ -345,13 +302,13 @@ const updateRegisterForId = async ( req, res = response ) => {
                 far_eye_right_pupillary_distance ?? 0,
                 far_eye_left_pupillary_distance ?? 0,
                 near_eye_right_sphere ?? 0,
-                near_eye_left_sphere ?? 0,
-                near_eye_right_cylinder ?? 0,
-                near_eye_left_cylinder ?? 0,
-                near_eye_right_grade ?? 0,
-                near_eye_left_grade ?? 0,
-                near_eye_right_pupillary_distance ?? 0,
-                near_eye_left_pupillary_distance ?? 0,
+                // near_eye_left_sphere ?? 0,
+                // near_eye_right_cylinder ?? 0,
+                // near_eye_left_cylinder ?? 0,
+                // near_eye_right_grade ?? 0,
+                // near_eye_left_grade ?? 0,
+                // near_eye_right_pupillary_distance ?? 0,
+                // near_eye_left_pupillary_distance ?? 0,
                 moment().format("YYYY-MM-DD") ], 
             (err, rows, fields) => {
             console.log(err);
