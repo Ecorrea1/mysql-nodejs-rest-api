@@ -34,7 +34,7 @@ const getAllRegisters = async ( req, res = response ) => {
     try {
         poolConnection.query( sqlRegisters + `ORDER BY created_at ASC`, (err, rows, fields) => {
             if(err) return DataError(res, err);
-            ResultwithData(res, 'Lista de regitros', rows );
+            ResultwithData(res, 'Lista de registros', rows );
         })
     } catch (error) {
         console.log(error);
@@ -50,7 +50,7 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
         const { name, age, phone, total, cristal, treatment, frame, observation, professional, date_attention, order, page, limit } = req.query;
         let query = sqlRegisters +` WHERE `;
 
-        if(name || age || phone || total || payment || balance || cristal || treatment || frame || observation || professional || date_attention){
+        if(name || age || phone || total || cristal || treatment || frame || observation || professional || date_attention){
             console.log('Fecha de atencion');
             console.log(moment(date_attention).format('YYYY-MM-DD'));
             let arrayQuery = [];
