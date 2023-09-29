@@ -51,8 +51,6 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
         let query = sqlRegisters +` WHERE `;
 
         if(name || age || phone || total || payment || balance || cristal || treatment || frame || observation || professional || date_attention){
-            console.log('Fecha de atencion');
-            console.log(moment(date_attention).format('YYYY-MM-DD'));
             let arrayQuery = [];
             if(name) arrayQuery.push(` name LIKE "%${name}%" `);
             if(age) arrayQuery.push(` age LIKE "%${age}%" `);
