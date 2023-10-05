@@ -304,7 +304,7 @@ const getOptionsForSelect = async ( req, res = response ) => {
     console.log('Entra a getOptionsForSelect');
     try {
         const { table } = req.params;
-        poolConnection.query(`SELECT * FROM ${ table } WHERE enabled = 1`, (err, rows, fields) => {
+        poolConnection.query(`SELECT * FROM ${ table }`, (err, rows, fields) => {
             if(err) return DataError( res, err );
             ResultwithData(res, `Lista de ${ table }`, rows );
         } );
