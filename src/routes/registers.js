@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const { getAllRegisters, getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId, getOptionsForSelect, getAllRegistersWithPagination } = require('../services/registers.services');
+const { getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId, getOptionsForSelect, getAllRegistersWithPagination } = require('../services/registers.services');
 
 // GET all registerss
 router.get('/', getAllRegistersWithPagination );
@@ -18,7 +18,6 @@ router.delete('/:id', deleteRegisterForId );
 router.post('/', insertRegister );
 
 // UPDATE An registers
-router.put('/:id', updateRegisterForId );
 router.post('/edit/:id', updateRegisterForId );
 
 router.get('/table/:table', getOptionsForSelect );
