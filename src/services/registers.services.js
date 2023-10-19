@@ -1,6 +1,6 @@
 const { response } = require('express');
 const moment = require('moment');
-const { mysqlConnection, poolConnection } = require('../database.js');
+const { poolConnection } = require('../database.js');
 const { ResultwithData, ResultwithDataPagination, NewData, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
 
 const sqlRegisters  = 

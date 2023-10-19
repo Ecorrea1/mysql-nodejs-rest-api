@@ -2,24 +2,13 @@ const { Router } = require('express');
 const router = Router();
 const { getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId, getOptionsForSelect, getAllRegistersWithPagination } = require('../services/registers.services');
 
-// GET all registerss
-router.get('/', getAllRegistersWithPagination );
-
-// GET An registers by id or name
-router.get('/search', getAllRegistersWithWhere );
-
-// GET An registers
-router.get('/:id', getRegisterForId );
-
-// DELETE An registers
-router.delete('/:id', deleteRegisterForId );
-
-// INSERT An registers
-router.post('/', insertRegister );
-
-// UPDATE An registers
-router.post('/edit/:id', updateRegisterForId );
-
-router.get('/table/:table', getOptionsForSelect );
+router
+    .get('/', getAllRegistersWithPagination )
+    .get('/search', getAllRegistersWithWhere )
+    .get('/:id', getRegisterForId )
+    .delete('/:id', deleteRegisterForId )
+    .post('/', insertRegister )
+    .post('/edit/:id', updateRegisterForId )
+    .get('/table/:table', getOptionsForSelect )
 
 module.exports = router;

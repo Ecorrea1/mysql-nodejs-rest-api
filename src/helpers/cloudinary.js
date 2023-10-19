@@ -1,9 +1,7 @@
-const { ServerError, DataError, ResultwithData } = require('../../helpers/result');
-const { CreateNewHistoric } = require('../historic/historic.controller');
+const { ServerError, DataError } = require('../../helpers/result');
 const cloudinary = require('cloudinary').v2;
 
-
-export async function UploadImage ( img, filename, typeFile = 'base64'|'file' ) {
+export async function UploadImage ( img, filename, typeFile = 'base64'|'file', fileFolder = 'products' ) {
     if (!img || !uid) return DataError(res, 'Ingrese todos los datos');
     
     const file = typeFile === 'base64' ? 'data:image/jpeg;base64,' + img : img;
@@ -12,7 +10,7 @@ export async function UploadImage ( img, filename, typeFile = 'base64'|'file' ) 
             public_id: filename,
             format: 'webp',
             unique_filename: true,
-            folder: 'products',
+            folder: fileFolder,
             use_filename: true,
             overwrite: true,
             quality: "auto", 

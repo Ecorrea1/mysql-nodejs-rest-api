@@ -1,21 +1,15 @@
 'use strict'
+const { check } = require('express-validator');
+const { valitedFields } = require('../middlewares/validated-field.middleware');
 const { Router } = require('express');
 const router = Router();
 const { getAllCristals, getCristalForId, deleteCristalForId, insertCristal, updateCristal } = require('../services/cristals.services');
 
-// GET all Cristals
-router.get('/', getAllCristals ); 
-
-// GET An Cristals
-router.get('/:id', getCristalForId );
-
-// DELETE An Cristals
-router.delete('/:id', deleteCristalForId );
-
-// INSERT An Cristals
-router.post('/', insertCristal );
-
-// UPDATE An Cristals
-router.post('/edit/:id', updateCristal );
+router
+    .get('/', getAllCristals ) 
+    .get('/:id', [check('id', 'El id es obligatio').not().isEmpty(), valitedFields],getCristalForId )
+    .delete('/:id', [check('id', 'El id es obligatio').not().isEmpty(), valitedFields], deleteCristalForId )
+    .post('/', [check('name', 'El nombre es obligatio').not().isEmpty(), valitedFields], insertCristal )
+    .post('/edit/:id', [check('id', 'El id es obligatio').not().isEmpty(), valitedFields], updateCristal )
 
 module.exports = router;
