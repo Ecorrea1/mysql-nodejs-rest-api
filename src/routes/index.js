@@ -6,7 +6,6 @@ function routerApi(app) {
     router.use('/registers', require('./registers'));
     router.use('/cristals', require('./cristals'));
     router.use('/treatment', require('./treatment'));
-    router.use('/professionals', require('./professionals'));
     router.use('/configs', require('./configs'));
 }
 
