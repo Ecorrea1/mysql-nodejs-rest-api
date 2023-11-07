@@ -1,5 +1,5 @@
 const { response } = require('express');
-const { mysqlConnection, poolConnection } = require('../database.js');
+const { mysqlConnection, poolConnection } = require('../config/database.js');
 const { ResultwithData, DataError, ResultOnly, ServerError, NewData } = require('../helpers/result.js');
 
 const getAllUsers = async ( req, res = response ) => {

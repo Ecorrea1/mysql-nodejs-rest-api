@@ -1,5 +1,5 @@
 const { response } = require('express');
-const { poolConnection }  = require('../database.js');
+const { poolConnection }  = require('../config/database.js');
 const { ResultwithData, DataError, ServerError } = require('../helpers/result.js');
 
 const getAllConfigs = async ( req, res = response ) => {

@@ -1,10 +1,12 @@
 'use strict';
 const express = require('express');
 const app = express();
+const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const routerApi = require('./routes');
+dotenv.config();
 // Settings
 app.set('port', process.env.PORT || 3000 );
 

@@ -1,10 +1,10 @@
 const mysql = require('mysql');
-
+const  { config } = require('./config');
 const mysqlConnection = mysql.createConnection({
-  host: 'sql470.main-hosting.eu',
-  user: 'u882038204_omc',
-  password: 'Optica_1',
-  database: 'u882038204_registros_omc',
+  host: config.dbHost,
+  user: config.dbUser,
+  password: config.dbPassword,
+  database: config.dbName,
   // multipleStatements: true,
   // debug: true
 });
@@ -12,10 +12,10 @@ const mysqlConnection = mysql.createConnection({
 const poolConnection = mysql.createPool({ 
   connectionLimit : 10,
   acquireTimeout : 10000,
-  host: 'sql470.main-hosting.eu',
-  user: 'u882038204_omc',
-  password: 'Optica_1',
-  database: 'u882038204_registros_omc',
+  host: config.dbHost,
+  user: config.dbUser,
+  password: config.dbPassword,
+  database: config.dbName,
 }); 
 
 const conectado = () => {
