@@ -32,7 +32,7 @@ FROM registers `;
 const getAllRegisters = async ( req, res = response ) => {
     console.log('Entra a getAllRegisters');
     try {
-        poolConnection.query( sqlRegisters + `ORDER BY created_at ASC`, (err, rows, fields) => {
+        poolConnection.query( sqlRegisters + `ORDER BY created_at DESC`, (err, rows, fields) => {
             if(err) return DataError(res, err);
             ResultwithData(res, 'Lista de registros', rows );
         })
@@ -68,7 +68,7 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
     
         }
 
-        sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } ASC`;
+        sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } DESC`;
         
         if (page) sqlComplete += ` LIMIT ${ limit ?? 10 } OFFSET ${( limit ?? 10 ) * ( page - 1 )};`;
         

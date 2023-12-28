@@ -1,9 +1,9 @@
 const { Router } = require('express');
 const router = Router();
-const { getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId, getOptionsForSelect, getAllRegistersWithPagination } = require('../services/registers.services');
+const { getAllRegisters, getAllRegistersWithWhere, getRegisterForId, deleteRegisterForId, insertRegister, updateRegisterForId, getOptionsForSelect, getAllRegistersWithPagination } = require('../services/registers.services');
 
 router
-    .get('/', getAllRegistersWithPagination )
+    .get('/',  getAllRegisters)
     .get('/search', getAllRegistersWithWhere )
     .get('/:id', getRegisterForId )
     .delete('/:id', deleteRegisterForId )
