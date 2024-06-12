@@ -10,8 +10,8 @@ const ResultwithData = (res, msg = '', data) => {
     return res.status(200).json({ ok: true, msg: msg, data: data ?? [] });
 }
 
-const ResultwithDataPagination = (res, msg = '', data, next, prev, total) => {
-    return res.status(200).json({ ok: true, msg: msg, data: data, next: next, prev: prev, total: total });
+const ResultwithDataPagination = (res, msg = '', data, page, total, next, prev) => {
+    return res.status(200).json({ ok: true, msg, data, page, total, next, prev});
 }
 
 const ResultOnly = (res, msg = '') => {

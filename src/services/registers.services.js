@@ -45,17 +45,24 @@ const getAllRegisters = async ( req, res = response ) => {
 const getAllRegistersWithWhere = async ( req, res = response ) => {
     console.log('Entra a getAllRegistersWithWhere');
     try {
-    let sqlComplete = '';
-    if(req.query){
-        const { name, age, phone, total, cristal, treatment, frame, observation, professional, date_attention, order, page, limit } = req.query;
+        let sqlComplete = '';
+        if(!req.query) {
+            console.log('NO tiene query');
+            
+            sqlComplete = sqlRegisters + `ORDER BY created_at DESC`;
+            return   poolConnection.query( sqlComplete, (err, rows, fields) => {
+                if(err) return DataError(res, err);
+                ResultwithData( res, 'Lista de regitros', rows );
+            })
+        }    
+    
+        const { name, age, phone, total, cristal, treatment, frame, observation, professional, order, page = 1, limit = 10 } = req.query;
         let query = sqlRegisters +` WHERE `;
-
-        if(name || age || phone || total || cristal || treatment || frame || observation || professional || date_attention){
-            console.log('Fecha de atencion');
-            console.log(moment(date_attention).format('YYYY-MM-DD'));
+    
+        if(name || age || phone || total || cristal || treatment || frame || observation || professional ) {
             let arrayQuery = [];
             if(name) arrayQuery.push(` name LIKE "%${name}%" `);
-            if(age) arrayQuery.push(` age LIKE "%${age}%" `);
+            if(age) arrayQuery.push(` age LIKE "%${parseInt(age)}%" `);
             if(phone) arrayQuery.push(` phone LIKE "%${phone}%" `);
             if(total) arrayQuery.push(` total LIKE "%${total}%" `);
             if(cristal) arrayQuery.push(` cristal LIKE "%${cristal}%" `);
@@ -63,24 +70,34 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
             if(frame) arrayQuery.push(` frame LIKE "%${frame}%" `);
             if(observation) arrayQuery.push(` observation LIKE "%${observation}%" `);
             if(professional) arrayQuery.push(` professional LIKE "%${professional}%" `);
-            if(date_attention) arrayQuery.push(` date_attention LIKE "%${ moment( date_attention ).format('YYYY-MM-DD')}%" `);
+            // if(date_attention) arrayQuery.push(` date_attention LIKE "%${ moment( date_attention ).format('YYYY-MM-DD')}%" `);
             query +=  arrayQuery.join(' AND ');
-    
+
         }
-
+        
         sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } DESC`;
-        
-        if (page) sqlComplete += ` LIMIT ${ limit ?? 10 } OFFSET ${( limit ?? 10 ) * ( page - 1 )};`;
-        
 
-    } else {
-
-        sqlComplete = sqlRegisters + `ORDER BY created_at DESC`;
-    }
-        poolConnection.query( sqlComplete, (err, rows, fields) => {
+        let index = parseInt( page) || 1;
+        let limits = parseInt( limit) || 10;
+        const offset = (index - 1) * limits;
+    
+        if (page) sqlComplete += ` LIMIT ${ limits } OFFSET ${offset};`;
+    
+        let totalRegistros = 0;
+        poolConnection.query( 'SELECT COUNT(*) AS total FROM registers', async (err, rows, fields) => {
             if(err) return DataError(res, err);
-            ResultwithData( res, 'Lista de regitros', rows );
-        })
+            totalRegistros = rows[0].total; 
+        });
+
+        poolConnection.query( sqlComplete, async (err, rows, fields) => {
+            if(err) return DataError(res, err);
+            const totalPages = Math.ceil(totalRegistros / limits)
+            console.log(totalPages);
+            
+            ResultwithDataPagination(res, 'Lista de regitros', rows, index, totalPages, index + 1, index - 1  );
+        
+        });
+
     } catch (error) {
         console.log( error );
         return ServerError( res, error);
@@ -90,17 +107,30 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
 
 const getAllRegistersWithPagination = async ( req, res = response ) => {
     console.log('Entra a getAllRegistersWithPagination');
-    console.log(req.query);
     const { page = 1, limit = 10 } = req.query;
-    console.log('page: ', page);
-    
-    const offset = limit * (page - 1);
-    const sqlComplete = sqlRegisters + `ORDER BY created_at DESC LIMIT ${ limit } OFFSET ${ offset };`;
+    let index = parseInt( page) || 1;
+    let limits = parseInt( limit) || 10;
+    const offset = (index - 1) * limits;
+    const sqlComplete = sqlRegisters + `ORDER BY created_at DESC LIMIT ${ limits } OFFSET ${ offset };`;
     try {
-        poolConnection.query( sqlComplete, (err, rows, fields) => {
+        
+        let totalRegistros = 0;
+        poolConnection.query( 'SELECT COUNT(*) AS total FROM registers', async (err, rows, fields) => {
             if(err) return DataError(res, err);
-            ResultwithDataPagination(res, 'Lista de regitros', rows, page + 1, page <= 0 ?  page = 1 : page - 1,  );
-        } );
+            // 'rows' es un array de objetos. Cada objeto representa una fila de la tabla de resultados.
+            // Como 'SELECT COUNT(*)' devuelve solo una fila, accedemos al primer elemento del array.
+            // Usamos 'total' como alias en la consulta SQL para poder acceder al conteo directamente.
+            totalRegistros = rows[0].total; 
+        });
+
+        poolConnection.query( sqlComplete, async (err, rows, fields) => {
+            if(err) return DataError(res, err);
+            const totalPages = Math.ceil(totalRegistros / limits)
+            ResultwithDataPagination(res, 'Lista de regitros', rows, index, totalPages, index + 1, index - 1  );
+        
+        });
+
+    
     } catch (error) {
         console.log(error);
         return ServerError(res, error);

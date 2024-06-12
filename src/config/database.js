@@ -26,11 +26,17 @@ const conectado = () => {
 }
 
 const query = (sql) => {
-  mysqlConnection.query(sql, (err, rows) => {
+  poolConnection.query(sql, (err, rows) => {
     if (err) throw error;
     console.log('Consulta ejecutada');
     console.log(rows);
     return rows;
+ })
+};
+const countSQlAsTotal = (sql) => {
+  poolConnection.query(sql, (err, rows) => {
+    if (err) throw error;
+    return rows[0].total;
  })
 };
 
@@ -46,5 +52,6 @@ module.exports = {
   poolConnection,
   conectado,
   query,
+  countSQlAsTotal,
   desconectado
 };
