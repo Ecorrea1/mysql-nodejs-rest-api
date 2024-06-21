@@ -21,7 +21,7 @@ const login = async ( req, res = response ) => {
     return ServerError(res, err);
   }
 }
-
+  
 module.exports = {
   login
 }

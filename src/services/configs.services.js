@@ -40,8 +40,45 @@ try {
     }
 }
 
+const serverUp = async (req, res = response) => {
+  try {
+    const {code} = req.params;
+    const query = `SELECT id, description, type, enabled FROM configs WHERE code = "${code}"`;
+    poolConnection.query(query, (err, rows, fields) => {
+      if(err) return DataError(res, err);
+      console.log(rows);
+      
+      return ResultwithData(res,'Solicitud exitosa', rows);
+    });
+  } catch (err) {
+    console.log(err.message);
+    return ServerError(res, err);
+  }
+}
+
+const login = async ( req, res = response ) => {
+  try {
+    const { rut, pass } = req.body;
+    const query = `SELECT * FROM users WHERE rut = ${ rut } AND pass = ${ pass }`;
+    poolConnection.query(query, (err, rows, fields) => {
+      if(err) return DataError(res, err);
+      console.log(rows);
+      
+      return ResultwithData(res,'Usuario Correcto', rows);
+    });
+
+    // if(!userExist) return DataError(res, 'Usuario Incorrecto');
+    // return ResultwithData(res,'Usuario Correcto', userExist);
+
+  } catch (err) {
+    console.log(err.message);
+    return ServerError(res, err);
+  }
+}
+
 
 module.exports = {
     getAllConfigs,
-    updateConfig
+    updateConfig,
+    serverUp
 }
