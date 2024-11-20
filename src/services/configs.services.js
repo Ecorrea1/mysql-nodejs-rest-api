@@ -76,9 +76,8 @@ const login = async ( req, res = response ) => {
   }
 }
 
-
 module.exports = {
-    getAllConfigs,
-    updateConfig,
-    serverUp
+  getAllConfigs,
+  updateConfig,
+  serverUp
 }

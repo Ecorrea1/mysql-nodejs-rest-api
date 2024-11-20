@@ -13,7 +13,6 @@ const getAllCristals = async ( req, res = response ) => {
         return ServerError(res, error);
     }
 }
-
 const getCristalForId = async ( req, res = response ) => {
     try {
         const { id } = req.params; 
@@ -26,7 +25,6 @@ const getCristalForId = async ( req, res = response ) => {
         return ServerError(res, error);
     }
 }
-
 const deleteCristalForId = async ( req, res = response ) => {
     try {
         const { id } = req.params;
@@ -39,7 +37,6 @@ const deleteCristalForId = async ( req, res = response ) => {
         return ServerError(res, error);
     }
 }
-
 const insertCristal = async ( req, res = response ) => {
     try {
         const { name, description, enabled } = req.body;
@@ -62,7 +59,6 @@ const insertCristal = async ( req, res = response ) => {
         return ServerError(res, error);
     }
 }
-
 const updateCristal = async ( req, res = response ) => {
     try {
         const { id } = req.params;

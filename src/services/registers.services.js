@@ -104,7 +104,6 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
     }
 }
 
-
 const getAllRegistersWithPagination = async ( req, res = response ) => {
     console.log('Entra a getAllRegistersWithPagination');
     const { page = 1, limit = 10 } = req.query;
