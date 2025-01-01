@@ -29,7 +29,6 @@ const encode_base64 = (filename) =>{
     }
   );
 }
-  
 
 module.exports = { 
   decode_base64, 

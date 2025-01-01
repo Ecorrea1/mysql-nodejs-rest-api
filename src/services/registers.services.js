@@ -1,7 +1,8 @@
 const { response } = require('express');
 const moment = require('moment');
+const sequelize = require('../config/sequelize.js');
 const { poolConnection } = require('../config/database.js');
-const { ResultwithData, ResultwithDataPagination, NewData, DataError, ResultOnly, ServerError } = require('../helpers/result.js');
+const { ResultwithData, DataError, ServerError } = require('../helpers/result.js');
 
 const sqlRegisters  = 
 `SELECT
@@ -41,7 +42,6 @@ const getAllRegisters = async ( req, res = response ) => {
         return ServerError(res, error);
     }
 }
-
 const getAllRegistersWithWhere = async ( req, res = response ) => {
     console.log('Entra a getAllRegistersWithWhere');
     try {
@@ -82,19 +82,10 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
         const offset = (index - 1) * limits;
     
         if (page) sqlComplete += ` LIMIT ${ limits } OFFSET ${offset};`;
-    
-        let totalRegistros = 0;
-        poolConnection.query( 'SELECT COUNT(*) AS total FROM registers', async (err, rows, fields) => {
-            if(err) return DataError(res, err);
-            totalRegistros = rows[0].total; 
-        });
 
         poolConnection.query( sqlComplete, async (err, rows, fields) => {
             if(err) return DataError(res, err);
-            const totalPages = Math.ceil(totalRegistros / limits)
-            console.log(totalPages);
-            
-            ResultwithDataPagination(res, 'Lista de regitros', rows, index, totalPages, index + 1, index - 1  );
+            return rows
         
         });
 
@@ -103,67 +94,45 @@ const getAllRegistersWithWhere = async ( req, res = response ) => {
         return ServerError( res, error);
     }
 }
-
-const getAllRegistersWithPagination = async ( req, res = response ) => {
-    console.log('Entra a getAllRegistersWithPagination');
-    const { page = 1, limit = 10 } = req.query;
-    let index = parseInt( page) || 1;
-    let limits = parseInt( limit) || 10;
-    const offset = (index - 1) * limits;
-    const sqlComplete = sqlRegisters + `ORDER BY created_at DESC LIMIT ${ limits } OFFSET ${ offset };`;
+const countRegisters = async () => {
+    console.log('Entra a countRegisters');
     try {
-        
-        let totalRegistros = 0;
-        poolConnection.query( 'SELECT COUNT(*) AS total FROM registers', async (err, rows, fields) => {
-            if(err) return DataError(res, err);
-            // 'rows' es un array de objetos. Cada objeto representa una fila de la tabla de resultados.
-            // Como 'SELECT COUNT(*)' devuelve solo una fila, accedemos al primer elemento del array.
-            // Usamos 'total' como alias en la consulta SQL para poder acceder al conteo directamente.
-            totalRegistros = rows[0].total; 
-        });
-
-        poolConnection.query( sqlComplete, async (err, rows, fields) => {
-            if(err) return DataError(res, err);
-            const totalPages = Math.ceil(totalRegistros / limits)
-            ResultwithDataPagination(res, 'Lista de regitros', rows, index, totalPages, index + 1, index - 1  );
-        
-        });
-
-    
+        return await sequelize.query('SELECT COUNT(*) AS total FROM registers', { type: sequelize.QueryTypes.SELECT } )
+        .catch((error) => console.error(error.message));
     } catch (error) {
         console.log(error);
         return ServerError(res, error);
     }
 }
-
-const getRegisterForId = async ( req, res = response ) => {
+const getAllRegistersWithPagination = async ( limit, offset ) => {
+    console.log('Entra a getAllRegistersWithPagination');
+    try {
+      return await sequelize.query( sqlRegisters + `ORDER BY created_at DESC LIMIT ${ limit } OFFSET ${ offset };` , { type: sequelize.QueryTypes.SELECT } )
+      .catch((error) => console.error(error.message));
+    } catch (error) {
+      console.error(error.message)
+    }
+}
+const getRegisterForId = async ( id ) => {
     console.log('Entra a getRegisterForId');
     try {
-        const { id } = req.params; 
-        poolConnection.query('SELECT * FROM registers WHERE id = ?', [id], (err, rows, fields) => {
-          if(err) return DataError(res, err);
-          ResultwithData(res, `Registros de ${id}`, rows[0] );
-        });
+        return await sequelize.query(`SELECT * FROM registers WHERE id = ${ id }`, { type: sequelize.QueryTypes.SELECT })
+        .catch((error) => console.error(error.message));
     } catch (error) {
         console.log(error);
-        return ServerError(res, error);
     }
 }
-
 const deleteRegisterForId = async ( req, res = response ) => {
     console.log('Entra a deleteRegisterForId');
     try {
         const { id } = req.params;
-        poolConnection.query('DELETE FROM registers WHERE id = ?', [id], (err, rows, fields) => {
-            if(err) return DataError(res, err);
-            ResultOnly( res, 'Registro eliminado');
-        });
+        return await sequelize.query(`DELETE FROM registers WHERE id = ${ id }`, { type: sequelize.QueryTypes.DELETE })
+        .catch((error) => console.error(error.message));
     } catch (error) {
         console.log(error);
         return ServerError(res, error);
     }
 }
-
 const insertRegister = async ( req, res = response ) => {
     console.log('Entra a insertRegister');
     try {
@@ -236,22 +205,19 @@ const insertRegister = async ( req, res = response ) => {
         "${ moment().format("YYYY-MM-DD") }",
         "${ moment().format("YYYY-MM-DD") }"
         );`;
-        poolConnection.query(query, (err, rows, fields) => {
-            if(err) return DataError(res, err);
-            console.log(rows[0]);
-            console.log('Aqui deberia de insertar');
-            NewData( res, 'Registro guardado', rows[0]);
-        });
+
+        return await sequelize.query(query, { type: sequelize.QueryTypes.INSERT })
+        .catch((error) => console.error(error.message));
+    
     } catch (error) {
         console.log(error);
         return ServerError(res, error);
     }
 }
-
-const updateRegisterForId = async ( req, res = response ) => {
+const updateRegisterForId = async ( id, req, res = response ) => {
     console.log('Entra a updateRegisterForId');
     try {
-        const { id } = req.params;
+        
         const { 
             name, 
             age, 
@@ -321,25 +287,20 @@ const updateRegisterForId = async ( req, res = response ) => {
             (err, rows, fields) => {
             console.log(err);
             if(err) return DataError(res, err);
-            ResultOnly( res, 'Registro actualizado');
+            return rows[0];
         } );
     } catch (error) {
         console.log(error);
         return ServerError(res, error);
     }
 }
-
-const getOptionsForSelect = async ( req, res = response ) => {
+const getOptionsForSelect = async ( table) => {
     console.log('Entra a getOptionsForSelect');
     try {
-        const { table } = req.params;
-        poolConnection.query(`SELECT * FROM ${ table } WHERE enabled = 1`, (err, rows, fields) => {
-            if(err) return DataError( res, err );
-            ResultwithData(res, `Lista de ${ table }`, rows );
-        } );
+        return await sequelize.query(`SELECT * FROM ${ table } WHERE enabled = 1`, { type: sequelize.QueryTypes.SELECT })
+        .catch((error) => console.error(error.message));
     } catch (error) {
         console.log(error);
-        return ServerError(res, error);
     }
 }
 
@@ -347,6 +308,7 @@ module.exports = {
     getAllRegisters, 
     getAllRegistersWithWhere,
     getAllRegistersWithPagination,
+    countRegisters,
     getRegisterForId, 
     deleteRegisterForId, 
     insertRegister, 
