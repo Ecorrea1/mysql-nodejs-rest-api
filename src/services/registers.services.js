@@ -140,10 +140,12 @@ const getRegisterForId = async ( id ) => {
         console.log(error);
     }
 }
-const deleteRegisterForId = async ( req, res = response ) => {
+const deleteRegisterForId = async ( id, res = response ) => {
     console.log('Entra a deleteRegisterForId');
     try {
-        const { id } = req.params;
+    
+        console.log('ID to delete:', id);
+        if (!id) return DataError(res, 'ID is required'); 
         return await sequelize.query(`DELETE FROM registers WHERE id = ${ id }`, { type: sequelize.QueryTypes.DELETE })
         .catch((error) => console.error(error.message));
     } catch (error) {

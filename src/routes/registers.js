@@ -6,7 +6,7 @@ router
     .get('/', service.get )
     .get('/search', service.getWithWhere )
     .get('/:id', service.getById )
-    .delete('/:id', service._delete )
+    .delete('/delete/:id', service._delete )
     .post('/', service.create )
     .post('/edit/:id', service.update )
     .get('/table/:table', service.getOptionsForSelect );

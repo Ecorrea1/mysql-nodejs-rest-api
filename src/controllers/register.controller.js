@@ -74,8 +74,10 @@ const update = async ( req, res ) => {
 const _delete = async ( req, res ) => {
     try {
         const { id } = req.params;
+        console.log('ID to delete:', id);
+        if (!id) return DataError(res, 'ID is required');
         const response = await services.deleteRegisterForId(id, res);
-        return ResultwithData(res, `Registros de ${id} eliminado`, response[0]);
+        return ResultwithData(res, `Registros de ${id} eliminado`);
     } catch (error) {
         return ServerError(res, error.message);
     }
