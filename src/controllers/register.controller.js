@@ -16,7 +16,7 @@ const get = async ( req, res ) => {
         let limits = parseInt( limit) || 10;
         const offset = ( index - 1) * limits;
         const totalPages = await services.countRegisters();  
-        const response = await services.getAllRegistersWithPagination( limits, offset);   
+        const response = await services.getAllRegistersWithPagination( limits, offset);  
         return  ResultwithDataPagination(res, 'Lista de regitros', response, index, Math.ceil(totalPages[0].total / limits), index + 1, index - 1  );
     
     } catch (error) {
@@ -28,10 +28,12 @@ const getWithWhere = async ( req, res ) => {
         const { page = 1, limit = 10 } = req.query;
         const index = parseInt( page) || 1;
         let limits = parseInt( limit) || 10;
+        console.log(req.query);
         // const totalPages = Math.ceil( await services.getTotalRegisters() / 10);
         const totalPages = await services.countRegisters();
         const response = await services.getAllRegistersWithWhere(req, res);
-        return  ResultwithDataPagination(res, 'Lista de regitros', response, index, Math.ceil(totalPages / limits), index + 1, index - 1  );
+        console.log(response);
+        return ResultwithDataPagination(res, 'Lista de regitros', response, index, Math.ceil(totalPages / limits), index + 1, index - 1  );
     
     } catch (error) {
         return ServerError(res, error.message);

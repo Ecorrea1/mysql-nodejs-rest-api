@@ -4,7 +4,7 @@ const NewData = (res, msg, data ) => res.status(201).json({ ok: true, msg: msg, 
 
 const ResultwithData = (res, msg = '', data) => res.status(200).json({ ok: true, msg: msg, data: data ?? [] });
 
-const ResultwithDataPagination = (res, msg = '', data, page, total, next, prev) => res.status(200).json({ ok: true, msg, data, page, total, next, prev});
+const ResultwithDataPagination = (res, msg = '', data, page, total, next, prev) => res.status(200).json({ ok: true, msg, data: data ?? [], page, total, next, prev});
 
 const ResultOnly = (res, msg = '') => res.status(200).json({ ok: true, msg: msg });
 

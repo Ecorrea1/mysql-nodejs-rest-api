@@ -42,58 +42,76 @@ const getAllRegisters = async ( req, res = response ) => {
         return ServerError(res, error);
     }
 }
-const getAllRegistersWithWhere = async ( req, res = response ) => {
+
+const getAllRegistersWithWhere = async (req, res = response) => {
     console.log('Entra a getAllRegistersWithWhere');
+
     try {
-        let sqlComplete = '';
-        if(!req.query) {
-            console.log('NO tiene query');
-            
-            sqlComplete = sqlRegisters + `ORDER BY created_at DESC`;
-            return   poolConnection.query( sqlComplete, (err, rows, fields) => {
-                if(err) return DataError(res, err);
-                ResultwithData( res, 'Lista de regitros', rows );
-            })
-        }    
-    
-        const { name, age, phone, total, cristal, treatment, frame, observation, professional, order, page = 1, limit = 10 } = req.query;
-        let query = sqlRegisters +` WHERE `;
-    
-        if(name || age || phone || total || cristal || treatment || frame || observation || professional ) {
-            let arrayQuery = [];
-            if(name) arrayQuery.push(` name LIKE "%${name}%" `);
-            if(age) arrayQuery.push(` age LIKE "%${parseInt(age)}%" `);
-            if(phone) arrayQuery.push(` phone LIKE "%${phone}%" `);
-            if(total) arrayQuery.push(` total LIKE "%${total}%" `);
-            if(cristal) arrayQuery.push(` cristal LIKE "%${cristal}%" `);
-            if(treatment) arrayQuery.push(` treatment LIKE "%${treatment}%" `);
-            if(frame) arrayQuery.push(` frame LIKE "%${frame}%" `);
-            if(observation) arrayQuery.push(` observation LIKE "%${observation}%" `);
-            if(professional) arrayQuery.push(` professional LIKE "%${professional}%" `);
-            // if(date_attention) arrayQuery.push(` date_attention LIKE "%${ moment( date_attention ).format('YYYY-MM-DD')}%" `);
-            query +=  arrayQuery.join(' AND ');
+        const {
+            name, age, phone, total, cristal,
+            treatment, frame, observation, professional,
+            order = 'created_at', page = 1, limit = 10
+        } = req.query;
 
-        }
-        
-        sqlComplete = query + `ORDER BY ${ (order) ? order : 'created_at' } DESC`;
+        const filters = [];
+        const params = [];
 
-        let index = parseInt( page) || 1;
-        let limits = parseInt( limit) || 10;
-        const offset = (index - 1) * limits;
-    
-        if (page) sqlComplete += ` LIMIT ${ limits } OFFSET ${offset};`;
+        const searchableFields = [
+            { key: 'name', query: 'name LIKE ?', format: val => `%${val}%` },
+            { key: 'age', query: 'age = ?', format: val => parseInt(val) },
+            { key: 'phone', query: 'phone LIKE ?', format: val => `%${val}%` },
+            { key: 'total', query: 'total LIKE ?', format: val => `%${val}%` },
+            { key: 'cristal', query: 'cristal LIKE ?', format: val => `%${val}%` },
+            { key: 'treatment', query: 'treatment LIKE ?', format: val => `%${val}%` },
+            { key: 'frame', query: 'frame LIKE ?', format: val => `%${val}%` },
+            { key: 'observation', query: 'observation LIKE ?', format: val => `%${val}%` },
+            { key: 'professional', query: 'professional LIKE ?', format: val => `%${val}%` }
+        ];
 
-        poolConnection.query( sqlComplete, async (err, rows, fields) => {
-            if(err) return DataError(res, err);
-            return rows
-        
+        // Construir filtros dinámicamente
+        searchableFields.forEach(({ key, query, format }) => {
+            if (req.query[key]) {
+                filters.push(query);
+                params.push(format(req.query[key]));
+            }
+        });
+
+        let sql = sqlRegisters;
+
+        if (filters.length > 0) sql += ` WHERE ${filters.join(' AND ')}`;
+        sql += ` ORDER BY ${order} DESC`;
+
+        const parsedLimit = parseInt(limit);
+        const parsedPage = parseInt(page);
+        const offset = (parsedPage - 1) * parsedLimit;
+
+        sql += ` LIMIT ? OFFSET ?`;
+        params.push(parsedLimit, offset);
+
+        // Mostrar query generada para depuración
+        console.log('SQL Query:', sql);
+        console.log('Params:', params);
+        // Ejecutar la consulta
+        return await sequelize.query(sql, {
+            replacements: params,
+            type: sequelize.QueryTypes.SELECT
+        })
+        .then(rows => {
+            if (rows.length === 0) return [];
+            const dataSearch = rows.map(row => ({ ...row }));
+            return dataSearch;
+        })
+        .catch(err => {
+            console.error('Error en la consulta:', err);
+            return DataError(res, err);
         });
 
     } catch (error) {
-        console.log( error );
-        return ServerError( res, error);
+        console.error('Error en getAllRegistersWithWhere:', error);
+        return ServerError(res, error);
     }
-}
+};
+
 const countRegisters = async () => {
     console.log('Entra a countRegisters');
     try {
